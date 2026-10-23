@@ -83,28 +83,32 @@
         <div class="sidebar-menu">
             <a href="/home" class="menu-item">
                 <i class="material-icons">home</i>
-                <span>Home</span>
+                <span data-i18n="nav.home">Home</span>
             </a>
             <a href="/diagnosis" class="menu-item">
                 <i class="material-icons">camera_alt</i>
-                <span>AI Diagnosis</span>
+                <span data-i18n="nav.diagnosis">AI Diagnosis</span>
             </a>
             <a href="/chat" class="menu-item">
                 <i class="material-icons">chat</i>
-                <span>Plant Doctor</span>
+                <span data-i18n="nav.chat">Plant Doctor</span>
             </a>
             <a href="/history" class="menu-item">
                 <i class="material-icons">history</i>
-                <span>History</span>
+                <span data-i18n="nav.history">History</span>
             </a>
             <a href="/about" class="menu-item active">
                 <i class="material-icons">info</i>
-                <span>About App</span>
+                <span data-i18n="nav.about">About App</span>
+            </a>
+            <a href="/language" class="menu-item">
+                <i class="material-icons">translate</i>
+                <span data-i18n="nav.language">Language</span>
             </a>
             <div style="border-top: 1px solid var(--gray-100); margin: 10px 0;"></div>
             <a href="#" onclick="handleLogout()" class="menu-item">
                 <i class="material-icons">logout</i>
-                <span>Logout</span>
+                <span data-i18n="nav.logout">Logout</span>
             </a>
         </div>
     </div>
@@ -118,17 +122,17 @@
         <div class="logo-circle" style="margin: 0 auto 15px;">
             <i class="material-icons">eco</i>
         </div>
-        <h1 style="font-size: 28px;">About PlantCare AI</h1>
-        <p style="opacity: 0.9;">Your Comprehensive Plant Health Guide</p>
+        <h1 style="font-size: 28px;" data-i18n="about.title">About PlantCare AI</h1>
+        <p style="opacity: 0.9;" data-i18n="about.subtitle">Your Comprehensive Plant Health Guide</p>
     </div>
 
     <div class="about-content">
         <div class="info-section">
             <div class="info-header">
                 <div class="info-icon"><i class="material-icons">speed</i></div>
-                <h2 class="info-title">Quick & Accurate Diagnosis</h2>
+                <h2 class="info-title" data-i18n="about.feature1_title">Quick &amp; Accurate Diagnosis</h2>
             </div>
-            <p class="info-text">
+            <p class="info-text" data-i18n="about.feature1_desc">
                 Our advanced AI models are trained on millions of leaf images to provide lightning-fast identification of diseases. Within seconds of uploading a photo, you receive a detailed report on what's affecting your plant.
             </p>
         </div>
@@ -136,9 +140,9 @@
         <div class="info-section">
             <div class="info-header">
                 <div class="info-icon"><i class="material-icons">database</i></div>
-                <h2 class="info-title">Comprehensive Database</h2>
+                <h2 class="info-title" data-i18n="about.feature2_title">Comprehensive Database</h2>
             </div>
-            <p class="info-text">
+            <p class="info-text" data-i18n="about.feature2_desc">
                 We support a wide range of crops and ornamental plants. Our database is constantly updated with new diseases and treatment protocols, ensuring you always have access to the latest horticultural science.
             </p>
         </div>
@@ -146,9 +150,9 @@
         <div class="info-section">
             <div class="info-header">
                 <div class="info-icon"><i class="material-icons">nature</i></div>
-                <h2 class="info-title">Eco-Friendly Solutions</h2>
+                <h2 class="info-title" data-i18n="about.feature3_title">Eco-Friendly Solutions</h2>
             </div>
-            <p class="info-text">
+            <p class="info-text" data-i18n="about.feature3_desc">
                 We prioritize organic and environmentally friendly treatment recommendations. By identifying diseases early and precisely, we help you reduce the unnecessary use of broad-spectrum chemicals, protecting your soil and local ecosystem.
             </p>
         </div>
@@ -156,16 +160,16 @@
         <div class="info-section">
             <div class="info-header">
                 <div class="info-icon"><i class="material-icons">savings</i></div>
-                <h2 class="info-title">Save Time & Money</h2>
+                <h2 class="info-title" data-i18n="about.feature4_title">Save Time &amp; Money</h2>
             </div>
-            <p class="info-text">
+            <p class="info-text" data-i18n="about.feature4_desc">
                 Preventing crop failure is the best way to save money. By catching issues early, you can take action before the damage spreads, saving your investment and ensuring a bountiful harvest.
             </p>
         </div>
 
         <div style="text-align: center; margin-top: 40px; padding-bottom: 40px;">
             <a href="/diagnosis" class="btn btn-primary btn-full">
-                Start a New Scan
+                <span data-i18n="about.new_scan">Start a New Scan</span>
                 <i class="material-icons">camera_alt</i>
             </a>
         </div>
@@ -187,5 +191,6 @@
             }
         }
     </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
 </body>
 </html>

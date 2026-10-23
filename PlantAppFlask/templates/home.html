@@ -22,28 +22,32 @@
         <div class="sidebar-menu">
             <a href="/home" class="menu-item active">
                 <i class="material-icons">home</i>
-                <span>Home</span>
+                <span data-i18n="nav.home">Home</span>
             </a>
             <a href="/diagnosis" class="menu-item">
                 <i class="material-icons">camera_alt</i>
-                <span>AI Diagnosis</span>
+                <span data-i18n="nav.diagnosis">AI Diagnosis</span>
             </a>
             <a href="/chat" class="menu-item">
                 <i class="material-icons">chat</i>
-                <span>Plant Doctor</span>
+                <span data-i18n="nav.chat">Plant Doctor</span>
             </a>
             <a href="/history" class="menu-item">
                 <i class="material-icons">history</i>
-                <span>History</span>
+                <span data-i18n="nav.history">History</span>
             </a>
             <a href="/about" class="menu-item">
                 <i class="material-icons">info</i>
-                <span>About App</span>
+                <span data-i18n="nav.about">About App</span>
+            </a>
+            <a href="/language" class="menu-item">
+                <i class="material-icons">translate</i>
+                <span data-i18n="nav.language">Language</span>
             </a>
             <div style="border-top: 1px solid var(--gray-100); margin: 10px 0;"></div>
             <a href="#" onclick="handleLogout()" class="menu-item">
                 <i class="material-icons">logout</i>
-                <span>Logout</span>
+                <span data-i18n="nav.logout">Logout</span>
             </a>
         </div>
     </div>
@@ -58,11 +62,11 @@
             <div class="logo-circle logo-large">
                 <i class="material-icons">eco</i>
             </div>
-            <h1 class="app-name">PlantCare AI</h1>
-            <p class="tagline">Your Smart Plant Health Companion</p>
+            <h1 class="app-name" data-i18n="home.title">PlantCare AI</h1>
+            <p class="tagline" data-i18n="home.tagline">Your Smart Plant Health Companion</p>
             
             <div class="card mt-20" style="width:100%;">
-                <p style="text-align:center; line-height:1.6; color:var(--black);">
+                <p style="text-align:center; line-height:1.6; color:var(--black);" data-i18n="home.description">
                     Instantly detect plant diseases and get expert remedies using advanced AI technology. Keep your plants healthy and thriving!
                 </p>
             </div>
@@ -70,63 +74,63 @@
             <!-- Logout Button -->
             <button onclick="handleLogout()" class="btn btn-outline" style="margin-top: 15px; padding: 10px 25px; border-radius: 25px;">
                 <i class="material-icons" style="font-size: 18px;">logout</i>
-                Logout
+                <span data-i18n="home.logout_btn">Logout</span>
             </button>
         </div>
 
         <!-- Get Started Button -->
         <div style="text-align:center; margin: 30px 0;">
             <a href="/diagnosis" class="btn btn-white" style="padding: 18px 40px; border-radius: 30px;">
-                Get Started
+                <span data-i18n="home.get_started">Get Started</span>
                 <i class="material-icons">eco</i>
             </a>
         </div>
 
         <!-- Key Features -->
-        <h2 class="section-title">Key Features</h2>
+        <h2 class="section-title" data-i18n="home.key_features">Key Features</h2>
         <div class="features-grid animate-fade-in">
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="material-icons">camera_alt</i>
                 </div>
-                <h3 class="feature-title">Quick Scan</h3>
-                <p class="feature-desc">Capture or upload leaf images for instant analysis and Detection.</p>
+                <h3 class="feature-title" data-i18n="home.quick_scan">Quick Scan</h3>
+                <p class="feature-desc" data-i18n="home.quick_scan_desc">Capture or upload leaf images for instant analysis and Detection.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="material-icons">eco</i>
                 </div>
-                <h3 class="feature-title">AI Detection</h3>
-                <p class="feature-desc">Advanced AI identifies diseases with 95% accuracy</p>
+                <h3 class="feature-title" data-i18n="home.ai_detection">AI Detection</h3>
+                <p class="feature-desc" data-i18n="home.ai_detection_desc">Advanced AI identifies diseases with 95% accuracy</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="material-icons">healing</i>
                 </div>
-                <h3 class="feature-title">Smart Remedies</h3>
-                <p class="feature-desc">AI-powered treatment suggestions</p>
+                <h3 class="feature-title" data-i18n="home.smart_remedies">Smart Remedies</h3>
+                <p class="feature-desc" data-i18n="home.smart_remedies_desc">AI-powered treatment suggestions</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="material-icons">trending_up</i>
                 </div>
-                <h3 class="feature-title">Track Progress</h3>
-                <p class="feature-desc">Monitor plant recovery</p>
+                <h3 class="feature-title" data-i18n="home.track_progress">Track Progress</h3>
+                <p class="feature-desc" data-i18n="home.track_progress_desc">Monitor plant recovery</p>
             </div>
         </div>
 
         <!-- How It Works -->
         <div class="steps-card animate-fade-in">
-            <h2 class="steps-title">How It Works</h2>
+            <h2 class="steps-title" data-i18n="home.how_it_works">How It Works</h2>
             
             <div class="step-item">
                 <div class="step-number">1</div>
                 <div class="step-content">
                     <div class="step-header">
                         <i class="material-icons">camera_alt</i>
-                        <span class="step-title">Step 1</span>
+                        <span class="step-title" data-i18n="home.step1">Step 1</span>
                     </div>
-                    <p class="step-desc">Take a photo of your plant</p>
+                    <p class="step-desc" data-i18n="home.step1_desc">Take a photo of your plant</p>
                 </div>
             </div>
             
@@ -135,9 +139,9 @@
                 <div class="step-content">
                     <div class="step-header">
                         <i class="material-icons">speed</i>
-                        <span class="step-title">Step 2</span>
+                        <span class="step-title" data-i18n="home.step2">Step 2</span>
                     </div>
-                    <p class="step-desc">Our AI analyzes the disease</p>
+                    <p class="step-desc" data-i18n="home.step2_desc">Our AI analyzes the disease</p>
                 </div>
             </div>
             
@@ -146,9 +150,9 @@
                 <div class="step-content">
                     <div class="step-header">
                         <i class="material-icons">eco</i>
-                        <span class="step-title">Step 3</span>
+                        <span class="step-title" data-i18n="home.step3">Step 3</span>
                     </div>
-                    <p class="step-desc">Get expert recommendations</p>
+                    <p class="step-desc" data-i18n="home.step3_desc">Get expert recommendations</p>
                 </div>
             </div>
             
@@ -157,15 +161,15 @@
                 <div class="step-content">
                     <div class="step-header">
                         <i class="material-icons">trending_up</i>
-                        <span class="step-title">Step 4</span>
+                        <span class="step-title" data-i18n="home.step4">Step 4</span>
                     </div>
-                    <p class="step-desc">Track recovery and improvements</p>
+                    <p class="step-desc" data-i18n="home.step4_desc">Track recovery and improvements</p>
                 </div>
             </div>
         </div>
 
         <!-- Why Choose -->
-        <h2 class="section-title">Why Choose PlantCare AI?</h2>
+        <h2 class="section-title" data-i18n="home.why_choose">Why Choose PlantCare AI?</h2>
         
         <a href="/about" style="text-decoration: none; display: block;">
             <div class="benefit-card animate-fade-in clickable-card">
@@ -173,8 +177,8 @@
                     <i class="material-icons">speed</i>
                 </div>
                 <div class="benefit-content">
-                    <h3 class="benefit-title">Quick & Accurate Diagnosis</h3>
-                    <p class="benefit-desc">Get quick and precise plant disease identification</p>
+                    <h3 class="benefit-title" data-i18n="home.benefit1_title">Quick &amp; Accurate Diagnosis</h3>
+                    <p class="benefit-desc" data-i18n="home.benefit1_desc">Get quick and precise plant disease identification</p>
                 </div>
             </div>
         </a>
@@ -185,8 +189,8 @@
                     <i class="material-icons">eco</i>
                 </div>
                 <div class="benefit-content">
-                    <h3 class="benefit-title">Comprehensive Disease Database</h3>
-                    <p class="benefit-desc">95%+ accuracy rate</p>
+                    <h3 class="benefit-title" data-i18n="home.benefit2_title">Comprehensive Disease Database</h3>
+                    <p class="benefit-desc" data-i18n="home.benefit2_desc">95%+ accuracy rate</p>
                 </div>
             </div>
         </a>
@@ -197,8 +201,8 @@
                     <i class="material-icons">nature</i>
                 </div>
                 <div class="benefit-content">
-                    <h3 class="benefit-title">Eco-Friendly</h3>
-                    <p class="benefit-desc">Reduce chemical usage</p>
+                    <h3 class="benefit-title" data-i18n="home.benefit3_title">Eco-Friendly</h3>
+                    <p class="benefit-desc" data-i18n="home.benefit3_desc">Reduce chemical usage</p>
                 </div>
             </div>
         </a>
@@ -209,8 +213,8 @@
                     <i class="material-icons">savings</i>
                 </div>
                 <div class="benefit-content">
-                    <h3 class="benefit-title">Save Money</h3>
-                    <p class="benefit-desc">Prevent crop losses</p>
+                    <h3 class="benefit-title" data-i18n="home.benefit4_title">Save Money</h3>
+                    <p class="benefit-desc" data-i18n="home.benefit4_desc">Prevent crop losses</p>
                 </div>
             </div>
         </a>
@@ -219,15 +223,15 @@
         <div class="bottom-nav">
             <a href="/diagnosis" class="nav-item">
                 <i class="material-icons">camera_alt</i>
-                <span>Scan</span>
+                <span data-i18n="nav.diagnosis">Scan</span>
             </a>
             <a href="/chat" class="nav-item">
                 <i class="material-icons">chat</i>
-                <span>Chat</span>
+                <span data-i18n="nav.chat">Chat</span>
             </a>
             <a href="/history" class="nav-item">
                 <i class="material-icons">history</i>
-                <span>History</span>
+                <span data-i18n="nav.history">History</span>
             </a>
         </div>
     </div>
@@ -248,5 +252,6 @@
             }
         }
     </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
 </body>
 </html>

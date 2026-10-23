@@ -35,28 +35,32 @@
         <div class="sidebar-menu">
             <a href="/home" class="menu-item">
                 <i class="material-icons">home</i>
-                <span>Home</span>
+                <span data-i18n="nav.home">Home</span>
             </a>
             <a href="/diagnosis" class="menu-item">
                 <i class="material-icons">camera_alt</i>
-                <span>AI Diagnosis</span>
+                <span data-i18n="nav.diagnosis">AI Diagnosis</span>
             </a>
             <a href="/chat" class="menu-item active">
                 <i class="material-icons">chat</i>
-                <span>Plant Doctor</span>
+                <span data-i18n="nav.chat">Plant Doctor</span>
             </a>
             <a href="/history" class="menu-item">
                 <i class="material-icons">history</i>
-                <span>History</span>
+                <span data-i18n="nav.history">History</span>
             </a>
             <a href="/about" class="menu-item">
                 <i class="material-icons">info</i>
-                <span>About App</span>
+                <span data-i18n="nav.about">About App</span>
+            </a>
+            <a href="/language" class="menu-item">
+                <i class="material-icons">translate</i>
+                <span data-i18n="nav.language">Language</span>
             </a>
             <div style="border-top: 1px solid var(--gray-100); margin: 10px 0;"></div>
             <a href="#" onclick="handleLogout()" class="menu-item">
                 <i class="material-icons">logout</i>
-                <span>Logout</span>
+                <span data-i18n="nav.logout">Logout</span>
             </a>
         </div>
     </div>
@@ -69,7 +73,7 @@
         <!-- Header -->
         <div class="header">
             <div style="width:40px;"></div>
-            <h1 class="header-title">Plant Doctor</h1>
+            <h1 class="header-title" data-i18n="chat.title">Plant Doctor</h1>
             <div style="width:40px;"></div>
         </div>
 
@@ -81,7 +85,7 @@
                     <div class="bot-icon">
                         <i class="material-icons">eco</i>
                     </div>
-                    <div class="message-bubble">
+                    <div class="message-bubble" id="greetingMsg" data-i18n="chat.greeting">
                         Hello! I am your Plant Doctor AI. How can I help you with your plants today?
                     </div>
                 </div>
@@ -89,7 +93,7 @@
 
             <!-- Input Area -->
             <div class="chat-input">
-                <input type="text" id="messageInput" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="messageInput" data-i18n-placeholder="chat.placeholder" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
                 <button class="send-btn" onclick="sendMessage()">
                     <i class="material-icons">send</i>
                 </button>
@@ -98,22 +102,13 @@
     </div>
 
     <script>
-        const responses = [
-            "Based on my analysis, I recommend checking the soil moisture and ensuring proper sunlight exposure for your plant.",
-            "That sounds like it could be a nutrient deficiency. Try adding some organic fertilizer and see if the condition improves.",
-            "Yellowing leaves often indicate overwatering. Let the soil dry out between waterings and ensure proper drainage.",
-            "This appears to be a fungal infection. Apply a copper-based fungicide and remove affected leaves to prevent spreading.",
-            "Great question! Most indoor plants thrive in indirect sunlight and moderate watering. Water when the top inch of soil feels dry.",
-            "For best results, repot your plant every 1-2 years with fresh potting mix to provide new nutrients."
-        ];
-
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             
@@ -123,34 +118,65 @@
             addMessage(message, 'user');
             input.value = '';
 
-            // Simulate bot response
-            setTimeout(() => {
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                addMessage(randomResponse, 'bot');
-            }, 1000);
+            // Show thinking indicator
+            const thinkingText = window.t ? window.t('chat.thinking') : 'Thinking...';
+            const thinkingId = 'thinking-' + Date.now();
+            addMessage(thinkingText, 'bot', thinkingId);
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message, lang: window.getLang ? window.getLang() : 'en' })
+                });
+                const data = await response.json();
+
+                // Remove thinking bubble
+                const thinkingEl = document.getElementById(thinkingId);
+                if (thinkingEl) thinkingEl.remove();
+
+                if (data.success) {
+                    addMessage(data.response, 'bot');
+                } else {
+                    addMessage('Sorry, I could not process your request. Please try again.', 'bot');
+                }
+            } catch (error) {
+                const thinkingEl = document.getElementById(thinkingId);
+                if (thinkingEl) thinkingEl.remove();
+                addMessage('Network error. Please check your connection and try again.', 'bot');
+            }
         }
 
-        function addMessage(text, type) {
+        function addMessage(text, type, id) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
+            if (id) messageDiv.id = id;
+
+            // Sanitize text to prevent XSS
+            const safeText = document.createElement('span');
+            safeText.textContent = text;
 
             if (type === 'bot') {
-                messageDiv.innerHTML = `
-                    <div class="bot-icon">
-                        <i class="material-icons">eco</i>
-                    </div>
-                    <div class="message-bubble">${text}</div>
-                `;
+                const botIcon = document.createElement('div');
+                botIcon.className = 'bot-icon';
+                botIcon.innerHTML = '<i class="material-icons">eco</i>';
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                bubble.textContent = text;
+                messageDiv.appendChild(botIcon);
+                messageDiv.appendChild(bubble);
             } else {
-                messageDiv.innerHTML = `
-                    <div class="message-bubble">${text}</div>
-                `;
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                bubble.textContent = text;
+                messageDiv.appendChild(bubble);
             }
 
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
+
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('sidebarOverlay').classList.toggle('active');
@@ -166,5 +192,6 @@
             }
         }
     </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
 </body>
 </html>

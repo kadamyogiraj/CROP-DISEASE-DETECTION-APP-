@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantCare AI - Language</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .lang-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .lang-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2.5px solid var(--gray-100);
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .lang-card:hover {
+            border-color: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(46,125,50,0.15);
+        }
+        .lang-card.selected {
+            border-color: var(--dark-green);
+            background: linear-gradient(135deg, #e8f5e9, #f1f8f1);
+            box-shadow: 0 4px 16px rgba(46,125,50,0.2);
+        }
+        .lang-flag {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .lang-info {
+            flex: 1;
+        }
+        .lang-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-green);
+        }
+        .lang-native {
+            font-size: 15px;
+            color: var(--text-gray);
+            margin-top: 2px;
+        }
+        .lang-check {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2.5px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .lang-card.selected .lang-check {
+            background: var(--dark-green);
+            border-color: var(--dark-green);
+            color: white;
+        }
+        .lang-card.selected .lang-check i {
+            font-size: 16px;
+        }
+        .lang-check i { font-size: 0; color: white; transition: font-size 0.2s; }
+        .lang-card.selected .lang-check i { font-size: 16px; }
+
+        .save-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            background: var(--dark-green);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.35s ease;
+            z-index: 999;
+            white-space: nowrap;
+        }
+        .save-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="material-icons">eco</i>
+            </div>
+            <h2 style="font-size: 20px;">PlantCare AI</h2>
+        </div>
+        <div class="sidebar-menu">
+            <a href="/home" class="menu-item">
+                <i class="material-icons">home</i>
+                <span data-i18n="nav.home">Home</span>
+            </a>
+            <a href="/diagnosis" class="menu-item">
+                <i class="material-icons">camera_alt</i>
+                <span data-i18n="nav.diagnosis">AI Diagnosis</span>
+            </a>
+            <a href="/chat" class="menu-item">
+                <i class="material-icons">chat</i>
+                <span data-i18n="nav.chat">Plant Doctor</span>
+            </a>
+            <a href="/history" class="menu-item">
+                <i class="material-icons">history</i>
+                <span data-i18n="nav.history">History</span>
+            </a>
+            <a href="/about" class="menu-item">
+                <i class="material-icons">info</i>
+                <span data-i18n="nav.about">About App</span>
+            </a>
+            <a href="/language" class="menu-item active">
+                <i class="material-icons">translate</i>
+                <span data-i18n="nav.language">Language</span>
+            </a>
+            <div style="border-top: 1px solid var(--gray-100); margin: 10px 0;"></div>
+            <a href="#" onclick="handleLogout()" class="menu-item">
+                <i class="material-icons">logout</i>
+                <span data-i18n="nav.logout">Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar Toggle -->
+        <button class="sidebar-btn" onclick="toggleSidebar()">
+            <i class="material-icons">menu</i>
+        </button>
+
+        <!-- Header -->
+        <div class="header">
+            <button class="header-btn" onclick="window.history.back()">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            <h1 class="header-title" data-i18n="language.title">Select Language</h1>
+            <div style="width:40px;"></div>
+        </div>
+
+        <!-- Logo + Subtitle -->
+        <div class="logo-container animate-fade-in" style="padding-top:10px;">
+            <div class="logo-circle" style="width:60px;height:60px;">
+                <i class="material-icons" style="font-size:30px;">translate</i>
+            </div>
+            <p class="tagline" data-i18n="language.subtitle">Choose your preferred language for the app</p>
+        </div>
+
+        <!-- Language Cards -->
+        <div class="lang-grid animate-fade-in" id="langGrid">
+
+            <!-- English -->
+            <div class="lang-card" id="card-en" onclick="selectLang('en')">
+                <div class="lang-flag">🇬🇧</div>
+                <div class="lang-info">
+                    <div class="lang-name" data-i18n="language.english">English</div>
+                    <div class="lang-native" data-i18n="language.english_native">English</div>
+                </div>
+                <div class="lang-check" id="check-en">
+                    <i class="material-icons">check</i>
+                </div>
+            </div>
+
+            <!-- Hindi -->
+            <div class="lang-card" id="card-hi" onclick="selectLang('hi')">
+                <div class="lang-flag">🇮🇳</div>
+                <div class="lang-info">
+                    <div class="lang-name" data-i18n="language.hindi">Hindi</div>
+                    <div class="lang-native" data-i18n="language.hindi_native">हिंदी</div>
+                </div>
+                <div class="lang-check" id="check-hi">
+                    <i class="material-icons">check</i>
+                </div>
+            </div>
+
+            <!-- Marathi -->
+            <div class="lang-card" id="card-mr" onclick="selectLang('mr')">
+                <div class="lang-flag">🇮🇳</div>
+                <div class="lang-info">
+                    <div class="lang-name" data-i18n="language.marathi">Marathi</div>
+                    <div class="lang-native" data-i18n="language.marathi_native">मराठी</div>
+                </div>
+                <div class="lang-check" id="check-mr">
+                    <i class="material-icons">check</i>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Apply Button -->
+        <button class="btn btn-primary btn-full" id="applyBtn" onclick="applyLanguage()" style="margin-top: 10px;">
+            <i class="material-icons">check_circle</i>
+            <span data-i18n="language.apply">Apply Language</span>
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="save-toast" id="saveToast" data-i18n="language.saved">Language saved!</div>
+
+    <script>
+        let _selectedLang = localStorage.getItem('plantcare_lang') || 'en';
+
+        function selectLang(lang) {
+            _selectedLang = lang;
+            ['en', 'hi', 'mr'].forEach(function(l) {
+                document.getElementById('card-' + l).classList.toggle('selected', l === lang);
+            });
+        }
+
+        async function applyLanguage() {
+            await setLanguage(_selectedLang);
+            // Show toast
+            const toast = document.getElementById('saveToast');
+            toast.textContent = window.t('language.saved') || 'Language saved!';
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 2500);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (e) {
+                window.location.href = '/login';
+            }
+        }
+
+        // Highlight current selection on load
+        selectLang(_selectedLang);
+    </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+</body>
+</html>

@@ -22,28 +22,32 @@
         <div class="sidebar-menu">
             <a href="/home" class="menu-item">
                 <i class="material-icons">home</i>
-                <span>Home</span>
+                <span data-i18n="nav.home">Home</span>
             </a>
             <a href="/diagnosis" class="menu-item active">
                 <i class="material-icons">camera_alt</i>
-                <span>AI Diagnosis</span>
+                <span data-i18n="nav.diagnosis">AI Diagnosis</span>
             </a>
             <a href="/chat" class="menu-item">
                 <i class="material-icons">chat</i>
-                <span>Plant Doctor</span>
+                <span data-i18n="nav.chat">Plant Doctor</span>
             </a>
             <a href="/history" class="menu-item">
                 <i class="material-icons">history</i>
-                <span>History</span>
+                <span data-i18n="nav.history">History</span>
             </a>
             <a href="/about" class="menu-item">
                 <i class="material-icons">info</i>
-                <span>About App</span>
+                <span data-i18n="nav.about">About App</span>
+            </a>
+            <a href="/language" class="menu-item">
+                <i class="material-icons">translate</i>
+                <span data-i18n="nav.language">Language</span>
             </a>
             <div style="border-top: 1px solid var(--gray-100); margin: 10px 0;"></div>
             <a href="#" onclick="handleLogout()" class="menu-item">
                 <i class="material-icons">logout</i>
-                <span>Logout</span>
+                <span data-i18n="nav.logout">Logout</span>
             </a>
         </div>
     </div>
@@ -56,7 +60,7 @@
         <!-- Header -->
         <div class="header">
             <div style="width:40px;"></div>
-            <h1 class="header-title">Plant Diagnosis</h1>
+            <h1 class="header-title" data-i18n="diagnosis.title">Plant Diagnosis</h1>
             <button class="header-btn" onclick="window.location.href='/history'">
                 <i class="material-icons">history</i>
             </button>
@@ -65,7 +69,7 @@
         <!-- Image Preview -->
         <div class="image-preview animate-fade-in" id="imagePreview">
             <i class="material-icons">add_photo_alternate</i>
-            <p>Select or capture a plant image</p>
+            <p data-i18n="diagnosis.select_image">Select or capture a plant image</p>
         </div>
         <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
 
@@ -75,30 +79,30 @@
                 <div class="action-icon">
                     <i class="material-icons">camera_alt</i>
                 </div>
-                <span class="action-title">Take Photo</span>
+                <span class="action-title" data-i18n="diagnosis.take_photo">Take Photo</span>
             </button>
             <button class="action-card" onclick="uploadFromGallery()">
                 <div class="action-icon">
                     <i class="material-icons">photo_library</i>
                 </div>
-                <span class="action-title">Upload from Gallery</span>
+                <span class="action-title" data-i18n="diagnosis.upload_gallery">Upload from Gallery</span>
             </button>
         </div>
 
         <!-- Analyze Button -->
         <button class="btn btn-primary btn-full" id="analyzeBtn" onclick="startAnalysis()">
             <i class="material-icons">search</i>
-            Start AI Analysis
+            <span data-i18n="diagnosis.start_analysis">Start AI Analysis</span>
         </button>
 
         <!-- Results (hidden initially) -->
         <div class="results-card hidden" id="resultsCard">
-            <h2 class="results-title">Diagnosis Results</h2>
+            <h2 class="results-title" data-i18n="diagnosis.results_title">Diagnosis Results</h2>
             
             <div class="result-row">
                 <i class="material-icons" style="color:var(--dark-green);">local_florist</i>
                 <div>
-                    <p class="result-label">Plant Name</p>
+                    <p class="result-label" data-i18n="diagnosis.plant_name">Plant Name</p>
                     <p class="result-value" id="plantName">Tomato Leaf</p>
                 </div>
             </div>
@@ -106,7 +110,7 @@
             <div class="result-row">
                 <i class="material-icons orange">warning</i>
                 <div>
-                    <p class="result-label">Disease Detected</p>
+                    <p class="result-label" data-i18n="diagnosis.disease_detected">Disease Detected</p>
                     <p class="result-value" id="diseaseName">Early Blight</p>
                 </div>
             </div>
@@ -114,19 +118,21 @@
             <div class="result-row">
                 <i class="material-icons green">check_circle</i>
                 <div>
-                    <p class="result-label">Confidence</p>
+                    <p class="result-label" data-i18n="diagnosis.confidence">Confidence</p>
                     <p class="result-value" id="confidence">95%</p>
                 </div>
             </div>
+
+            <div id="healthAnalysis"></div>
             
             <!-- Precautions Section -->
             <div class="treatment-section" style="background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-radius: 15px; padding: 20px; margin-bottom: 15px;">
                 <h3 style="color: #e65100; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                     <i class="material-icons">warning</i>
-                    Precautions to be Followed
+                    <span data-i18n="diagnosis.precautions_title">Precautions to be Followed</span>
                 </h3>
                 <ul id="precautionsList" style="color: #bf360c; line-height: 1.8; font-size: 14px; padding-left: 20px; margin: 0;">
-                    <li>Loading...</li>
+                    <li data-i18n="diagnosis.loading">Loading...</li>
                 </ul>
             </div>
 
@@ -135,11 +141,11 @@
                 <div class="tab-buttons" style="display: flex; border-radius: 10px; overflow: hidden; background: #e0e0e0;">
                     <button id="organicTab" class="tab-btn active" onclick="switchTab('organic')" style="flex: 1; padding: 12px; border: none; background: #4CAF50; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">
                         <i class="material-icons" style="font-size: 16px; vertical-align: middle;">eco</i>
-                        Organic Manures
+                        <span data-i18n="diagnosis.organic_manures">Organic Manures</span>
                     </button>
                     <button id="inorganicTab" class="tab-btn" onclick="switchTab('inorganic')" style="flex: 1; padding: 12px; border: none; background: #e0e0e0; color: #666; font-weight: 600; cursor: pointer; transition: all 0.3s;">
                         <i class="material-icons" style="font-size: 16px; vertical-align: middle;">science</i>
-                        Inorganic Manures
+                        <span data-i18n="diagnosis.inorganic_manures">Inorganic Manures</span>
                     </button>
                 </div>
             </div>
@@ -148,10 +154,10 @@
             <div id="organicContent" class="tab-content" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 15px; padding: 20px; display: block;">
                 <h4 style="color: #2e7d32; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                     <i class="material-icons">spa</i>
-                    जैविक खाद (Organic Treatments)
+                    <span data-i18n="diagnosis.organic_label">Organic Treatments</span>
                 </h4>
                 <ul id="organicList" style="color: #1b5e20; line-height: 1.8; font-size: 14px; padding-left: 20px; margin: 0;">
-                    <li>Loading...</li>
+                    <li data-i18n="diagnosis.loading">Loading...</li>
                 </ul>
             </div>
 
@@ -159,21 +165,21 @@
             <div id="inorganicContent" class="tab-content" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 15px; padding: 20px; display: none;">
                 <h4 style="color: #1565c0; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                     <i class="material-icons">science</i>
-                    रासायनिक खाद (Chemical Treatments)
+                    <span data-i18n="diagnosis.inorganic_label">Chemical Treatments</span>
                 </h4>
                 <ul id="inorganicList" style="color: #0d47a1; line-height: 1.8; font-size: 14px; padding-left: 20px; margin: 0;">
-                    <li>Loading...</li>
+                    <li data-i18n="diagnosis.loading">Loading...</li>
                 </ul>
             </div>
             
             <a href="/chat" class="btn btn-primary btn-full mb-20">
                 <i class="material-icons">chat</i>
-                Chat with Plant Doctor
+                <span data-i18n="diagnosis.chat_doctor">Chat with Plant Doctor</span>
             </a>
             
             <button class="btn btn-outline btn-full" onclick="resetDiagnosis()">
                 <i class="material-icons">refresh</i>
-                Diagnose Another Plant
+                <span data-i18n="diagnosis.diagnose_another">Diagnose Another Plant</span>
             </button>
         </div>
     </div>
@@ -200,7 +206,6 @@
                     alert("Image/Video is too large (over 10MB). Please choose a smaller file.");
                     return;
                 }
-                
                 selectedFile = file;
                 const imageUrl = URL.createObjectURL(file);
                 document.getElementById('imagePreview').innerHTML = `<img src="${imageUrl}" alt="Selected plant">`;
@@ -215,22 +220,16 @@
                 return;
             }
             
-            // Show loading state
-            btn.innerHTML = `
-                <i class="material-icons">hourglass_empty</i>
-                Analyzing plant...
-            `;
+            const analyzingText = window.t ? window.t('diagnosis.analyzing') : 'Analyzing plant...';
+            btn.innerHTML = `<i class="material-icons">hourglass_empty</i> ${analyzingText}`;
             btn.disabled = true;
 
             try {
-                // Create form data with image
                 const formData = new FormData();
                 formData.append('image', selectedFile);
 
-                const startTime = Date.now();
-                // Call API with timeout signal
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+                const timeoutId = setTimeout(() => controller.abort(), 60000);
 
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
@@ -240,7 +239,6 @@
                 
                 clearTimeout(timeoutId);
 
-                // Check for non-JSON response (e.g., HTML error page or login redirect)
                 const contentType = response.headers.get("content-type");
                 
                 if (!response.ok) {
@@ -255,20 +253,20 @@
                          window.location.href = "/login";
                          return;
                     }
-                    throw new Error(`Response was not JSON (Status ${response.status}). Content: ${text.substring(0, 50)}...`);
+                    throw new Error(`Response was not JSON (Status ${response.status}).`);
                 }
 
                 const data = await response.json();
 
                 if (data.success) {
-                    // Update results
                     document.getElementById('plantName').textContent = data.plantName || 'Unknown';
                     document.getElementById('diseaseName').textContent = data.disease || 'Unknown';
                     document.getElementById('confidence').textContent = data.confidence || '0%';
-                    document.getElementById('confidence').textContent = data.confidence || '0%';
+
                     // Populate Precautions
                     const precautionsList = document.getElementById('precautionsList');
                     precautionsList.innerHTML = '';
+                    const noPrecautions = window.t ? window.t('diagnosis.no_precautions') : 'No specific precautions recommended.';
                     if (data.precautions && data.precautions.length > 0) {
                         data.precautions.forEach(item => {
                             const li = document.createElement('li');
@@ -276,12 +274,13 @@
                             precautionsList.appendChild(li);
                         });
                     } else {
-                        precautionsList.innerHTML = '<li>No specific precautions recommended.</li>';
+                        precautionsList.innerHTML = `<li>${noPrecautions}</li>`;
                     }
 
                     // Populate Organic Manures
                     const organicList = document.getElementById('organicList');
                     organicList.innerHTML = '';
+                    const noOrganic = window.t ? window.t('diagnosis.no_organic') : 'Stay with general organic care.';
                     if (data.organic_manures && data.organic_manures.length > 0) {
                         data.organic_manures.forEach(item => {
                             const li = document.createElement('li');
@@ -289,12 +288,13 @@
                             organicList.appendChild(li);
                         });
                     } else {
-                        organicList.innerHTML = '<li>Stay with general organic care.</li>';
+                        organicList.innerHTML = `<li>${noOrganic}</li>`;
                     }
 
                     // Populate Inorganic Manures
                     const inorganicList = document.getElementById('inorganicList');
                     inorganicList.innerHTML = '';
+                    const noInorganic = window.t ? window.t('diagnosis.no_inorganic') : 'No chemical treatments recommended.';
                     if (data.inorganic_manures && data.inorganic_manures.length > 0) {
                         data.inorganic_manures.forEach(item => {
                             const li = document.createElement('li');
@@ -302,10 +302,10 @@
                             inorganicList.appendChild(li);
                         });
                     } else {
-                        inorganicList.innerHTML = '<li>No chemical treatments recommended.</li>';
+                        inorganicList.innerHTML = `<li>${noInorganic}</li>`;
                     }
                     
-                    // Update disease icon color based on health
+                    // Update disease icon color
                     const diseaseIcon = document.querySelector('#resultsCard .result-row:nth-child(2) i');
                     if (data.disease === 'Healthy') {
                         diseaseIcon.className = 'material-icons green';
@@ -319,51 +319,42 @@
                         diseaseIcon.textContent = 'warning';
                     }
                     
-                    // Show health analysis if available
+                    // Health score
                     const healthSection = document.getElementById('healthAnalysis');
-                    if (data.healthAnalysis || data.health_score) {
-                         const score = data.health_score || (data.healthAnalysis ? data.healthAnalysis.health_score : 0);
-                         if(healthSection) {
-                            healthSection.innerHTML = `
-                                <div class="result-row">
-                                    <i class="material-icons" style="color: ${score > 70 ? '#4CAF50' : score > 40 ? '#FF9800' : '#F44336'};">favorite</i>
-                                    <div>
-                                        <p class="result-label">Health Score</p>
-                                        <p class="result-value">${score}%</p>
-                                    </div>
-                                </div>
-                            `;
-                         }
+                    if (data.health_score !== undefined) {
+                         const score = data.health_score;
+                         const healthLabel = window.t ? window.t('diagnosis.health_score') : 'Health Score';
+                         healthSection.innerHTML = `
+                             <div class="result-row">
+                                 <i class="material-icons" style="color: ${score > 70 ? '#4CAF50' : score > 40 ? '#FF9800' : '#F44336'};">favorite</i>
+                                 <div>
+                                     <p class="result-label">${healthLabel}</p>
+                                     <p class="result-value">${score}%</p>
+                                 </div>
+                             </div>
+                         `;
                     }
                     
-                    // Show results
                     document.getElementById('actionButtons').classList.add('hidden');
                     document.getElementById('analyzeBtn').classList.add('hidden');
                     document.getElementById('resultsCard').classList.remove('hidden');
                 } else {
                     alert('Server Error: ' + (data.error || 'Analysis failed'));
-                    btn.innerHTML = `
-                        <i class="material-icons">search</i>
-                        Start AI Analysis
-                    `;
+                    const startText = window.t ? window.t('diagnosis.start_analysis') : 'Start AI Analysis';
+                    btn.innerHTML = `<i class="material-icons">search</i> ${startText}`;
                     btn.disabled = false;
                 }
             } catch (error) {
                 console.error('Analysis error:', error);
-                
                 let errorMsg = error.message;
                 if (error.name === 'AbortError') {
                     errorMsg = "Request timeout. Server took too long to respond.";
                 } else if (error.message.includes("Failed to fetch")) {
                     errorMsg = "Network connection failed. Please check your internet.";
                 }
-                
-                alert('DEBUG ERROR (' + (new Date()).toLocaleTimeString() + '): ' + errorMsg);
-                
-                btn.innerHTML = `
-                    <i class="material-icons">search</i>
-                    Start AI Analysis
-                `;
+                alert('Error: ' + errorMsg);
+                const startText = window.t ? window.t('diagnosis.start_analysis') : 'Start AI Analysis';
+                btn.innerHTML = `<i class="material-icons">search</i> ${startText}`;
                 btn.disabled = false;
             }
         }
@@ -371,19 +362,20 @@
         function resetDiagnosis() {
             selectedFile = null;
             document.getElementById('fileInput').value = '';
+            const selectText = window.t ? window.t('diagnosis.select_image') : 'Select or capture a plant image';
             document.getElementById('imagePreview').innerHTML = `
                 <i class="material-icons">add_photo_alternate</i>
-                <p>Select or capture a plant image</p>
+                <p>${selectText}</p>
             `;
             document.getElementById('actionButtons').classList.remove('hidden');
             document.getElementById('analyzeBtn').classList.remove('hidden');
-            document.getElementById('analyzeBtn').innerHTML = `
-                <i class="material-icons">search</i>
-                Start AI Analysis
-            `;
+            const startText = window.t ? window.t('diagnosis.start_analysis') : 'Start AI Analysis';
+            document.getElementById('analyzeBtn').innerHTML = `<i class="material-icons">search</i> ${startText}`;
             document.getElementById('analyzeBtn').disabled = false;
             document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('healthAnalysis').innerHTML = '';
         }
+
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('sidebarOverlay').classList.toggle('active');
@@ -422,6 +414,7 @@
             }
         }
     </script>
-    <div style="text-align: center; color: #ccc; font-size: 10px; margin-top: 20px;">v1.1 Debug</div>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <div style="text-align: center; color: #ccc; font-size: 10px; margin-top: 20px;">v2.0</div>
 </body>
 </html>

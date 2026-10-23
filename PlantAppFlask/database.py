@@ -1,12 +1,20 @@
 """
 PlantCare AI - Database Module
 Local SQLite database for storing users and diagnosis history
+Passwords are hashed using werkzeug.security (pbkdf2:sha256)
 """
 
 import sqlite3
 import os
 from datetime import datetime
 import json
+
+try:
+    from werkzeug.security import generate_password_hash, check_password_hash
+    _HASHING_ENABLED = True
+except ImportError:
+    _HASHING_ENABLED = False
+    print("⚠️  WARNING: werkzeug not found. Passwords stored in plaintext. Install: pip install werkzeug")
 
 DB_PATH = 'plantcare.db'
 
@@ -15,6 +23,22 @@ def get_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+def _hash_password(password):
+    """Hash a plaintext password. Falls back to plaintext if werkzeug unavailable."""
+    if _HASHING_ENABLED:
+        return generate_password_hash(password)
+    return password
+
+def _verify_password(stored, provided):
+    """Verify a password against stored hash or plaintext."""
+    if _HASHING_ENABLED:
+        # If the stored value looks like a werkzeug hash, use check_password_hash
+        if stored.startswith('pbkdf2:') or stored.startswith('scrypt:'):
+            return check_password_hash(stored, provided)
+        # Legacy plaintext fallback (for existing accounts created before hashing)
+        return stored == provided
+    return stored == provided
 
 def init_db():
     """Initialize database tables"""
@@ -31,9 +55,16 @@ def init_db():
             phone TEXT,
             dob TEXT,
             gender TEXT,
+            preferred_lang TEXT DEFAULT 'en',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    
+    # Add preferred_lang column if upgrading from older schema
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN preferred_lang TEXT DEFAULT 'en'")
+    except Exception:
+        pass  # Column already exists
     
     # Diagnosis history table
     cursor.execute('''
@@ -71,15 +102,17 @@ def init_db():
 # ===== User Functions =====
 
 def create_user(name, email, password, phone=None, dob=None, gender=None):
-    """Create new user"""
+    """Create new user with hashed password"""
     conn = get_connection()
     cursor = conn.cursor()
+    
+    hashed = _hash_password(password)
     
     try:
         cursor.execute('''
             INSERT INTO users (name, email, password, phone, dob, gender)
             VALUES (?, ?, ?, ?, ?, ?)
-        ''', (name, email, password, phone, dob, gender))
+        ''', (name, email, hashed, phone, dob, gender))
         conn.commit()
         user_id = cursor.lastrowid
         conn.close()
@@ -89,15 +122,15 @@ def create_user(name, email, password, phone=None, dob=None, gender=None):
         return {"success": False, "error": "Email already exists"}
 
 def login_user(email, password):
-    """Login user"""
+    """Login user with password hash verification"""
     conn = get_connection()
     cursor = conn.cursor()
     
-    cursor.execute('SELECT * FROM users WHERE email = ? AND password = ?', (email, password))
+    cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
     user = cursor.fetchone()
     conn.close()
     
-    if user:
+    if user and _verify_password(user['password'], password):
         return {
             "success": True,
             "user": {
@@ -135,7 +168,7 @@ def get_user_by_email(email):
     return None
 
 def reset_password(email, new_password):
-    """Reset password for user with given email"""
+    """Reset password for user with given email (stored as hash)"""
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -147,19 +180,19 @@ def reset_password(email, new_password):
         conn.close()
         return {"success": False, "error": "Email not found"}
     
-    # Update password
-    cursor.execute('UPDATE users SET password = ? WHERE email = ?', (new_password, email))
+    # Hash new password before storing
+    hashed = _hash_password(new_password)
+    cursor.execute('UPDATE users SET password = ? WHERE email = ?', (hashed, email))
     conn.commit()
     conn.close()
     
     return {"success": True, "message": "Password reset successfully"}
 
-def update_user(user_id, name=None, phone=None, dob=None, gender=None):
+def update_user(user_id, name=None, phone=None, dob=None, gender=None, preferred_lang=None):
     """Update user details"""
     conn = get_connection()
     cursor = conn.cursor()
     
-    # Build query dynamically based on provided fields
     fields = []
     values = []
     
@@ -175,6 +208,9 @@ def update_user(user_id, name=None, phone=None, dob=None, gender=None):
     if gender:
         fields.append("gender = ?")
         values.append(gender)
+    if preferred_lang and preferred_lang in ['en', 'hi', 'mr']:
+        fields.append("preferred_lang = ?")
+        values.append(preferred_lang)
         
     if not fields:
         conn.close()
@@ -198,11 +234,8 @@ def delete_user(user_id):
     cursor = conn.cursor()
     
     try:
-        # Delete related data first (foreign keys)
         cursor.execute('DELETE FROM diagnosis_history WHERE user_id = ?', (user_id,))
         cursor.execute('DELETE FROM chat_history WHERE user_id = ?', (user_id,))
-        
-        # Delete user
         cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
         
         conn.commit()

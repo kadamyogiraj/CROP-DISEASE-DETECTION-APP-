@@ -25,8 +25,6 @@
 </head>
 <body>
     <div class="container">
-      
-
         <!-- Logo -->
         <div class="logo-container">
             <div class="logo-circle">
@@ -35,8 +33,8 @@
         </div>
 
         <!-- Title -->
-        <h1 class="title" id="pageTitle">Welcome Back!</h1>
-        <p class="subtitle" id="pageSubtitle">Sign in to continue your plant care journey</p>
+        <h1 class="title" id="pageTitle" data-i18n="auth.welcome_back">Welcome Back!</h1>
+        <p class="subtitle" id="pageSubtitle" data-i18n="auth.sign_in_subtitle">Sign in to continue your plant care journey</p>
 
         <!-- Card -->
         <div class="card animate-fade-in">
@@ -45,19 +43,19 @@
 
             <!-- Toggle -->
             <div class="toggle-container">
-                <button class="toggle-btn active" id="loginTab" onclick="switchToLogin()">Login</button>
-                <button class="toggle-btn" id="signupTab" onclick="switchToSignup()">Sign Up</button>
+                <button class="toggle-btn active" id="loginTab" onclick="switchToLogin()" data-i18n="auth.login_tab">Login</button>
+                <button class="toggle-btn" id="signupTab" onclick="switchToSignup()" data-i18n="auth.signup_tab">Sign Up</button>
             </div>
 
             <!-- Signup Fields (hidden by default)-->
             <div id="signupFields" class="hidden">
                 <div class="input-group">
                     <i class="material-icons">person</i>
-                    <input type="text" placeholder="Full Name" id="name">
+                    <input type="text" data-i18n-placeholder="auth.full_name" placeholder="Full Name" id="name">
                 </div>
                 <div class="input-group">
                     <i class="material-icons">phone</i>
-                    <input type="tel" placeholder="Contact Number" id="phone">
+                    <input type="tel" data-i18n-placeholder="auth.contact" placeholder="Contact Number" id="phone">
                 </div>
                 <div class="input-group">
                     <i class="material-icons">calendar_today</i>
@@ -66,10 +64,10 @@
                 <div class="input-group">
                     <i class="material-icons">wc</i>
                     <select id="gender" style="flex:1; padding:15px 0; border:none; background:transparent; font-size:16px; outline:none;">
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
+                        <option value="" data-i18n="auth.select_gender">Select Gender</option>
+                        <option value="male" data-i18n="auth.male">Male</option>
+                        <option value="female" data-i18n="auth.female">Female</option>
+                        <option value="other" data-i18n="auth.other">Other</option>
                     </select>
                 </div>
             </div>
@@ -77,20 +75,20 @@
             <!-- Common Fields -->
             <div class="input-group">
                 <i class="material-icons">email</i>
-                <input type="email" placeholder="Email Address" id="email">
+                <input type="email" data-i18n-placeholder="auth.email" placeholder="Email Address" id="email">
             </div>
             <div class="input-group">
                 <i class="material-icons">lock</i>
-                <input type="password" placeholder="Password" id="password">
+                <input type="password" data-i18n-placeholder="auth.password" placeholder="Password" id="password">
             </div>
 
             <!-- Submit Button -->
             <button class="btn btn-secondary btn-full mt-20" id="submitBtn" onclick="handleSubmit()">
-                Sign In
+                <span data-i18n="auth.sign_in">Sign In</span>
             </button>
 
             <!-- Forgot Password Link (only visible in login mode) -->
-            <a href="/forgot-password" id="forgotLink" class="forgot-link">Forgot Password?</a>
+            <a href="/forgot-password" id="forgotLink" class="forgot-link" data-i18n="auth.forgot_password">Forgot Password?</a>
         </div>
     </div>
 
@@ -99,7 +97,11 @@
 
         function showMessage(text, type) {
             const area = document.getElementById('messageArea');
-            area.innerHTML = `<div class="message ${type}">${text}</div>`;
+            const div = document.createElement('div');
+            div.className = 'message ' + type;
+            div.textContent = text; // Safe: no innerHTML
+            area.innerHTML = '';
+            area.appendChild(div);
             setTimeout(() => area.innerHTML = '', 5000);
         }
 
@@ -108,9 +110,9 @@
             document.getElementById('loginTab').classList.add('active');
             document.getElementById('signupTab').classList.remove('active');
             document.getElementById('signupFields').classList.add('hidden');
-            document.getElementById('pageTitle').textContent = 'Welcome Back!';
-            document.getElementById('pageSubtitle').textContent = 'Sign in to continue your plant care journey';
-            document.getElementById('submitBtn').textContent = 'Sign In';
+            document.getElementById('pageTitle').textContent = window.t ? window.t('auth.welcome_back') : 'Welcome Back!';
+            document.getElementById('pageSubtitle').textContent = window.t ? window.t('auth.sign_in_subtitle') : 'Sign in to continue your plant care journey';
+            document.querySelector('#submitBtn span').textContent = window.t ? window.t('auth.sign_in') : 'Sign In';
             document.getElementById('messageArea').innerHTML = '';
             document.getElementById('forgotLink').style.display = 'block';
         }
@@ -120,29 +122,28 @@
             document.getElementById('loginTab').classList.remove('active');
             document.getElementById('signupTab').classList.add('active');
             document.getElementById('signupFields').classList.remove('hidden');
-            document.getElementById('pageTitle').textContent = 'Create Account';
-            document.getElementById('pageSubtitle').textContent = 'Join PlantCare AI today';
-            document.getElementById('submitBtn').textContent = 'Create Account';
+            document.getElementById('pageTitle').textContent = window.t ? window.t('auth.create_account_title') : 'Create Account';
+            document.getElementById('pageSubtitle').textContent = window.t ? window.t('auth.join_subtitle') : 'Join PlantCare AI today';
+            document.querySelector('#submitBtn span').textContent = window.t ? window.t('auth.create_account') : 'Create Account';
             document.getElementById('messageArea').innerHTML = '';
             document.getElementById('forgotLink').style.display = 'none';
         }
 
         async function handleSubmit() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
             if (!email || !password) {
-                showMessage('Please fill in email and password', 'error');
+                showMessage(window.t ? window.t('auth.fill_fields') : 'Please fill in email and password', 'error');
                 return;
             }
 
             const btn = document.getElementById('submitBtn');
             btn.classList.add('loading');
-            btn.textContent = 'Please wait...';
+            btn.querySelector('span').textContent = window.t ? window.t('auth.please_wait') : 'Please wait...';
 
             try {
                 if (isLogin) {
-                    // Login
                     const response = await fetch('/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -151,23 +152,22 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        showMessage('Login successful! Redirecting...', 'success');
+                        showMessage(window.t ? window.t('auth.login_success') : 'Login successful! Redirecting...', 'success');
                         setTimeout(() => window.location.href = '/home', 1000);
                     } else {
                         showMessage(data.error || 'Login failed', 'error');
-                        btn.textContent = 'Sign In';
+                        btn.querySelector('span').textContent = window.t ? window.t('auth.sign_in') : 'Sign In';
                         btn.classList.remove('loading');
                     }
                 } else {
-                    // Signup
-                    const name = document.getElementById('name').value;
-                    const phone = document.getElementById('phone').value;
+                    const name = document.getElementById('name').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
                     const dob = document.getElementById('dob').value;
                     const gender = document.getElementById('gender').value;
 
                     if (!name) {
-                        showMessage('Please enter your name', 'error');
-                        btn.textContent = 'Create Account';
+                        showMessage(window.t ? window.t('auth.enter_name') : 'Please enter your name', 'error');
+                        btn.querySelector('span').textContent = window.t ? window.t('auth.create_account') : 'Create Account';
                         btn.classList.remove('loading');
                         return;
                     }
@@ -180,20 +180,26 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        showMessage('Account created! Please login.', 'success');
+                        showMessage(window.t ? window.t('auth.account_created') : 'Account created! Please login.', 'success');
                         setTimeout(() => switchToLogin(), 1500);
                     } else {
                         showMessage(data.error || 'Signup failed', 'error');
                     }
-                    btn.textContent = 'Create Account';
+                    btn.querySelector('span').textContent = window.t ? window.t('auth.create_account') : 'Create Account';
                     btn.classList.remove('loading');
                 }
             } catch (error) {
-                showMessage('Network error. Please try again.', 'error');
-                btn.textContent = isLogin ? 'Sign In' : 'Create Account';
+                showMessage(window.t ? window.t('auth.network_error') : 'Network error. Please try again.', 'error');
+                btn.querySelector('span').textContent = isLogin ? (window.t ? window.t('auth.sign_in') : 'Sign In') : (window.t ? window.t('auth.create_account') : 'Create Account');
                 btn.classList.remove('loading');
             }
         }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleSubmit();
+        });
     </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
 </body>
 </html>

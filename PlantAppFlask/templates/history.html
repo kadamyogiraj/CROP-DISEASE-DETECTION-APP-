@@ -18,6 +18,21 @@
             flex: 1;
             padding-bottom: 0;
         }
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-gray);
+        }
+        .empty-state i {
+            font-size: 60px;
+            color: var(--gray-100);
+            display: block;
+            margin-bottom: 16px;
+        }
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -35,28 +50,32 @@
         <div class="sidebar-menu">
             <a href="/home" class="menu-item">
                 <i class="material-icons">home</i>
-                <span>Home</span>
+                <span data-i18n="nav.home">Home</span>
             </a>
             <a href="/diagnosis" class="menu-item">
                 <i class="material-icons">camera_alt</i>
-                <span>AI Diagnosis</span>
+                <span data-i18n="nav.diagnosis">AI Diagnosis</span>
             </a>
             <a href="/chat" class="menu-item">
                 <i class="material-icons">chat</i>
-                <span>Plant Doctor</span>
+                <span data-i18n="nav.chat">Plant Doctor</span>
             </a>
             <a href="/history" class="menu-item active">
                 <i class="material-icons">history</i>
-                <span>History</span>
+                <span data-i18n="nav.history">History</span>
             </a>
             <a href="/about" class="menu-item">
                 <i class="material-icons">info</i>
-                <span>About App</span>
+                <span data-i18n="nav.about">About App</span>
+            </a>
+            <a href="/language" class="menu-item">
+                <i class="material-icons">translate</i>
+                <span data-i18n="nav.language">Language</span>
             </a>
             <div style="border-top: 1px solid var(--gray-100); margin: 10px 0;"></div>
             <a href="#" onclick="handleLogout()" class="menu-item">
                 <i class="material-icons">logout</i>
-                <span>Logout</span>
+                <span data-i18n="nav.logout">Logout</span>
             </a>
         </div>
     </div>
@@ -69,149 +88,95 @@
         <!-- Header -->
         <div class="header">
             <div style="width:40px;"></div>
-            <h1 class="header-title">History</h1>
+            <h1 class="header-title" data-i18n="history.title">History</h1>
             <div style="width:40px;"></div>
         </div>
 
-        <!-- History Container -->
-        <div class="history-container animate-fade-in">
-            <!-- History Item 1 -->
-            <div class="history-card">
-                <div class="history-header">
-                    <div class="history-icon">
-                        <i class="material-icons">local_florist</i>
-                    </div>
-                    <div class="history-info">
-                        <h3 class="history-plant">Tomato Leaf</h3>
-                        <div class="history-disease">
-                            <i class="material-icons">warning</i>
-                            <span>Early Blight</span>
-                        </div>
-                    </div>
-                    <span class="confidence-badge">95%</span>
-                </div>
-                <div class="history-footer">
-                    <div class="history-date">
-                        <i class="material-icons">calendar_today</i>
-                        <span>2026-01-09</span>
-                    </div>
-                    <div class="history-date">
-                        <i class="material-icons">access_time</i>
-                        <span>10:30 AM</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Item 2 -->
-            <div class="history-card">
-                <div class="history-header">
-                    <div class="history-icon">
-                        <i class="material-icons">local_florist</i>
-                    </div>
-                    <div class="history-info">
-                        <h3 class="history-plant">Rose Leaf</h3>
-                        <div class="history-disease">
-                            <i class="material-icons">warning</i>
-                            <span>Black Spot</span>
-                        </div>
-                    </div>
-                    <span class="confidence-badge">92%</span>
-                </div>
-                <div class="history-footer">
-                    <div class="history-date">
-                        <i class="material-icons">calendar_today</i>
-                        <span>2026-01-08</span>
-                    </div>
-                    <div class="history-date">
-                        <i class="material-icons">access_time</i>
-                        <span>02:15 PM</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Item 3 -->
-            <div class="history-card">
-                <div class="history-header">
-                    <div class="history-icon">
-                        <i class="material-icons">local_florist</i>
-                    </div>
-                    <div class="history-info">
-                        <h3 class="history-plant">Apple Leaf</h3>
-                        <div class="history-disease">
-                            <i class="material-icons">warning</i>
-                            <span>Apple Scab</span>
-                        </div>
-                    </div>
-                    <span class="confidence-badge">88%</span>
-                </div>
-                <div class="history-footer">
-                    <div class="history-date">
-                        <i class="material-icons">calendar_today</i>
-                        <span>2026-01-07</span>
-                    </div>
-                    <div class="history-date">
-                        <i class="material-icons">access_time</i>
-                        <span>09:45 AM</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Item 4 -->
-            <div class="history-card">
-                <div class="history-header">
-                    <div class="history-icon">
-                        <i class="material-icons">local_florist</i>
-                    </div>
-                    <div class="history-info">
-                        <h3 class="history-plant">Potato Leaf</h3>
-                        <div class="history-disease">
-                            <i class="material-icons">warning</i>
-                            <span>Late Blight</span>
-                        </div>
-                    </div>
-                    <span class="confidence-badge">97%</span>
-                </div>
-                <div class="history-footer">
-                    <div class="history-date">
-                        <i class="material-icons">calendar_today</i>
-                        <span>2026-01-06</span>
-                    </div>
-                    <div class="history-date">
-                        <i class="material-icons">access_time</i>
-                        <span>04:20 PM</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Item 5 -->
-            <div class="history-card">
-                <div class="history-header">
-                    <div class="history-icon">
-                        <i class="material-icons">local_florist</i>
-                    </div>
-                    <div class="history-info">
-                        <h3 class="history-plant">Grape Leaf</h3>
-                        <div class="history-disease">
-                            <i class="material-icons">warning</i>
-                            <span>Powdery Mildew</span>
-                        </div>
-                    </div>
-                    <span class="confidence-badge">91%</span>
-                </div>
-                <div class="history-footer">
-                    <div class="history-date">
-                        <i class="material-icons">calendar_today</i>
-                        <span>2026-01-05</span>
-                    </div>
-                    <div class="history-date">
-                        <i class="material-icons">access_time</i>
-                        <span>11:00 AM</span>
-                    </div>
-                </div>
+        <!-- History Container (loaded from API) -->
+        <div class="history-container animate-fade-in" id="historyContainer">
+            <!-- Loading state -->
+            <div class="empty-state" id="loadingState">
+                <i class="material-icons" style="color: var(--dark-green);">hourglass_empty</i>
+                <p>Loading...</p>
             </div>
         </div>
     </div>
+
     <script>
+        async function loadHistory() {
+            const container = document.getElementById('historyContainer');
+            try {
+                const response = await fetch('/api/history');
+                const data = await response.json();
+
+                container.innerHTML = '';
+
+                if (!data.success || !data.history || data.history.length === 0) {
+                    const noHistoryText = window.t ? window.t('history.no_history') : 'No diagnosis history found.';
+                    const scanNowText = window.t ? window.t('history.scan_now') : 'Scan a Plant Now';
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="material-icons">history</i>
+                            <p>${noHistoryText}</p>
+                            <a href="/diagnosis" class="btn btn-primary" style="display:inline-flex; padding: 12px 28px;">${scanNowText}</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                data.history.forEach(function(item) {
+                    const isHealthy = item.disease === 'Healthy';
+                    const isUnknown = item.is_unknown === 1;
+                    const iconName = isHealthy ? 'check_circle' : (isUnknown ? 'help_outline' : 'warning');
+                    const iconColor = isHealthy ? 'green' : (isUnknown ? '#9E9E9E' : '');
+
+                    const date = new Date(item.created_at);
+                    const dateStr = date.toLocaleDateString();
+                    const timeStr = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                    const card = document.createElement('div');
+                    card.className = 'history-card';
+                    card.innerHTML = `
+                        <div class="history-header">
+                            <div class="history-icon">
+                                <i class="material-icons">local_florist</i>
+                            </div>
+                            <div class="history-info">
+                                <h3 class="history-plant">${escapeHtml(item.plant_name || 'Unknown')}</h3>
+                                <div class="history-disease">
+                                    <i class="material-icons ${iconColor}" style="${isUnknown ? 'color:#9E9E9E' : ''}">${iconName}</i>
+                                    <span>${escapeHtml(item.disease || 'Unknown')}</span>
+                                </div>
+                            </div>
+                            <span class="confidence-badge">${escapeHtml(item.confidence || 'N/A')}</span>
+                        </div>
+                        <div class="history-footer">
+                            <div class="history-date">
+                                <i class="material-icons">calendar_today</i>
+                                <span>${dateStr}</span>
+                            </div>
+                            <div class="history-date">
+                                <i class="material-icons">access_time</i>
+                                <span>${timeStr}</span>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('History load error:', error);
+                const noHistoryText = window.t ? window.t('history.no_history') : 'Could not load history.';
+                container.innerHTML = `<div class="empty-state"><i class="material-icons">error_outline</i><p>${noHistoryText}</p></div>`;
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('sidebarOverlay').classList.toggle('active');
@@ -226,6 +191,12 @@
                 window.location.href = '/login';
             }
         }
+
+        // Load history after i18n is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadHistory, 300);
+        });
     </script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
 </body>
 </html>

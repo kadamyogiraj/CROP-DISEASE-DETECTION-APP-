@@ -2,10 +2,16 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 from flask_cors import CORS
 from functools import wraps
 import os
+import secrets
 
 app = Flask(__name__)
-app.secret_key = 'plantcare-ai-secret-key-2026'
+# Security: secret key from environment variable, never hardcoded
+app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 CORS(app)
+
+# Security: enforce secure session cookies in production
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Initialize database
 from database import init_db, create_user, login_user, save_diagnosis, get_diagnosis_history, save_chat, get_diagnosis_stats, get_user_by_email, reset_password
@@ -14,6 +20,13 @@ init_db()
 # Upload folder for images
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Allowed image extensions for security
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'}
+
+def allowed_file(filename):
+    """Check if uploaded file has an allowed extension"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ===== Authentication Decorator =====
 def login_required(f):
@@ -74,21 +87,33 @@ def history():
 def about():
     return render_template('about.html')
 
+@app.route('/language')
+@login_required
+def language():
+    """Language selection page"""
+    return render_template('language.html')
+
 # ===== API Endpoints =====
 
 @app.route('/api/signup', methods=['POST'])
 def api_signup():
     """User signup with database storage"""
     data = request.json
-    name = data.get('name', '')
-    email = data.get('email', '')
+    if not data:
+        return jsonify({"success": False, "error": "No data provided"})
+
+    name = data.get('name', '').strip()
+    email = data.get('email', '').strip().lower()
     password = data.get('password', '')
-    phone = data.get('phone', '')
+    phone = data.get('phone', '').strip()
     dob = data.get('dob', '')
     gender = data.get('gender', '')
     
     if not email or not password:
         return jsonify({"success": False, "error": "Email and password required"})
+
+    if len(password) < 4:
+        return jsonify({"success": False, "error": "Password must be at least 4 characters"})
     
     result = create_user(name, email, password, phone, dob, gender)
     return jsonify(result)
@@ -97,7 +122,10 @@ def api_signup():
 def api_login():
     """User login with database verification"""
     data = request.json
-    email = data.get('email', '')
+    if not data:
+        return jsonify({"success": False, "error": "No data provided"})
+
+    email = data.get('email', '').strip().lower()
     password = data.get('password', '')
     
     result = login_user(email, password)
@@ -119,7 +147,10 @@ def api_logout():
 def api_reset_password():
     """Reset user password"""
     data = request.json
-    email = data.get('email', '')
+    if not data:
+        return jsonify({"success": False, "error": "No data provided"})
+
+    email = data.get('email', '').strip().lower()
     new_password = data.get('newPassword', '')
     
     if not email or not new_password:
@@ -144,6 +175,20 @@ def api_user():
         }
     })
 
+@app.route('/api/language', methods=['GET', 'POST'])
+@login_required
+def api_language():
+    """Get or set preferred language for the current session"""
+    if request.method == 'POST':
+        data = request.json or {}
+        lang = data.get('lang', 'en')
+        if lang not in ['en', 'hi', 'mr']:
+            return jsonify({"success": False, "error": "Unsupported language. Use: en, hi, mr"})
+        session['lang'] = lang
+        return jsonify({"success": True, "lang": lang})
+    else:
+        return jsonify({"success": True, "lang": session.get('lang', 'en')})
+
 @app.route('/api/analyze', methods=['POST'])
 @login_required
 def api_analyze():
@@ -153,11 +198,20 @@ def api_analyze():
             return jsonify({"success": False, "error": "No image provided"})
             
         image_file = request.files['image']
+
+        # Security: validate file extension
+        if not allowed_file(image_file.filename):
+            return jsonify({"success": False, "error": "Invalid file type. Please upload an image (jpg, png, gif, webp)."})
+
         image_bytes = image_file.read()
+
+        # Security: limit file size server-side (10MB)
+        if len(image_bytes) > 10 * 1024 * 1024:
+            return jsonify({"success": False, "error": "Image too large. Maximum size is 10MB."})
         
-        # Save image locally
-        image_filename = f"scan_{len(os.listdir(UPLOAD_FOLDER))}_{session.get('user_id')}.jpg"
-        image_path = os.path.join(UPLOAD_FOLDER, image_filename)
+        # Save image locally with safe filename
+        safe_filename = f"scan_{len(os.listdir(UPLOAD_FOLDER))}_{session.get('user_id')}.jpg"
+        image_path = os.path.join(UPLOAD_FOLDER, safe_filename)
         with open(image_path, 'wb') as f:
             f.write(image_bytes)
 
@@ -178,33 +232,39 @@ def api_analyze():
         
         # Prepare image for Gemini (optimized for low memory)
         img = PIL.Image.open(io.BytesIO(image_bytes))
-        img = img.convert('RGB')  # Remove alpha channel to reduce memory
-        img.thumbnail((512, 512))  # Smaller size for faster processing
+        img = img.convert('RGB')
+        img.thumbnail((512, 512))
         
-        # Compress to JPEG in memory to reduce size further
         buffer = io.BytesIO()
         img.save(buffer, format='JPEG', quality=85)
         buffer.seek(0)
         img = PIL.Image.open(buffer)
 
-        # Prompt - Updated for structured treatment response
-        prompt = """
-        Analyze this image of a plant leaf. Return a JSON object with the following fields:
+        # Language-aware prompt
+        lang = session.get('lang', 'en')
+        lang_instruction = {
+            'en': 'Respond with all text fields (disease name, precautions, treatments) in English.',
+            'hi': 'सभी टेक्स्ट फ़ील्ड (रोग का नाम, सावधानियां, उपचार) हिंदी में दें।',
+            'mr': 'सर्व मजकूर फील्ड (रोगाचे नाव, खबरदारी, उपचार) मराठीत द्या.'
+        }
+
+        prompt = f"""
+        Analyze this image of a plant leaf. {lang_instruction.get(lang, lang_instruction['en'])}
+        Return a JSON object with the following fields:
         1. plantName: The name of the plant (e.g., "Tomato", "Potato", "Pepper").
         2. disease: The name of the disease or "Healthy" if no disease is found.
         3. confidence: A percentage string (e.g., "95%") indicating confidence in the diagnosis.
         4. health_score: A number from 0 to 100 representing the plant's health (100 is perfectly healthy).
         5. isUnknown: Boolean, set to true ONLY if the image is clearly NOT a plant.
-        6. precautions: An array of 4-5 precaution strings that should be followed (e.g., ["Remove infected leaves immediately", "Avoid overhead watering"]).
-        7. organic_manures: An array of 3-4 organic treatment recommendations with details (e.g., ["Neem Cake: Apply 100-150g per plant", "Vermicompost: Apply 500g per plant"]).
-        8. inorganic_manures: An array of 2-3 chemical/inorganic treatment recommendations (e.g., ["Mancozeb 75% WP: 2.5g per liter water", "Copper Oxychloride: 3g per liter"]).
+        6. precautions: An array of 4-5 precaution strings that should be followed.
+        7. organic_manures: An array of 3-4 organic treatment recommendations with details.
+        8. inorganic_manures: An array of 2-3 chemical/inorganic treatment recommendations.
         
         If the plant is healthy, provide general care tips in precautions and preventive treatments in organic/inorganic sections.
         
         Output ONLY the raw JSON string, no markdown formatting.
         """
         
-        # List of models to try in order of preference (Based on actual available models in logs)
         models_to_try = [
             'gemini-2.5-flash-lite',
             'gemini-2.5-flash-lite-preview-09-2025',
@@ -233,7 +293,6 @@ def api_analyze():
                 continue
         
         if not gemini_response:
-            # If all failed, print available models for debugging
             try:
                 print("All models failed. Available models:")
                 for m in genai.list_models():
@@ -243,7 +302,6 @@ def api_analyze():
                 pass
             raise last_error or Exception("All models failed")
 
-        # Debug Logging
         print("Debugging Gemini Response:")
         try:
             print(f"Safety Ratings: {gemini_response.prompt_feedback}")
@@ -262,11 +320,13 @@ def api_analyze():
         # Clean up any markdown formatting if present
         if text_response.startswith('```json'):
             text_response = text_response[7:]
+        if text_response.startswith('```'):
+            text_response = text_response[3:]
         if text_response.endswith('```'):
             text_response = text_response[:-3]
             
         try:
-            result = json.loads(text_response)
+            result = json.loads(text_response.strip())
             result['success'] = True
             result['used_model'] = used_model 
         except json.JSONDecodeError as je:
@@ -322,10 +382,23 @@ def api_stats():
 @app.route('/api/chat', methods=['POST'])
 @login_required
 def api_chat():
-    """Chat endpoint with database storage"""
+    """Chat endpoint with Gemini AI and database storage"""
     data = request.json
-    message = data.get('message', '')
-    
+    if not data:
+        return jsonify({"success": False, "error": "No data provided"})
+
+    message = data.get('message', '').strip()
+    if not message:
+        return jsonify({"success": False, "error": "Empty message"})
+
+    # Language-aware chat
+    lang = session.get('lang', data.get('lang', 'en'))
+    lang_instruction = {
+        'en': 'Respond in English.',
+        'hi': 'हिंदी में जवाब दें।',
+        'mr': 'मराठीत उत्तर द्या.'
+    }
+
     # Gemini Chat Integration
     try:
         import google.generativeai as genai
@@ -339,8 +412,8 @@ def api_chat():
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-1.5-flash')
             
-            # Plant Expert Persona - Relaxed
             prompt = f"""You are a helpful and knowledgeable Plant Expert AI. 
+            {lang_instruction.get(lang, lang_instruction['en'])}
             User's question: {message}
             
             Provide a helpful, accurate, and friendly response. 
@@ -355,8 +428,7 @@ def api_chat():
             
     except Exception as e:
         print(f"Gemini Error: {str(e)}")
-        # Fallback to simple logic if API fails
-        response = "I'm having trouble connecting to my AI brain right now. Please try again in a moment."
+        response = "I'm having trouble connecting right now. Please try again in a moment."
 
     # Save to database
     user_id = session.get('user_id')
@@ -367,6 +439,7 @@ def api_chat():
 if __name__ == '__main__':
     print("🌿 PlantCare AI Server Starting...")
     print("🔐 Authentication: Enabled")
+    print("🌐 Language: English / Hindi / Marathi")
     print("📱 Open http://localhost:5000 in your browser")
     print("📱 For mobile: http://<your-ip>:5000")
     print("💾 Database: SQLite (plantcare.db)")
