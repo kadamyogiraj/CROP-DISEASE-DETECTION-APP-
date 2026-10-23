@@ -134,6 +134,9 @@ def api_login():
         session['user_id'] = result['user']['id']
         session['user_name'] = result['user']['name']
         session['user_email'] = result['user']['email']
+        user_lang = result['user'].get('preferred_lang', 'en')
+        if 'lang' not in session or not session['lang']:
+            session['lang'] = user_lang
     
     return jsonify(result)
 
@@ -176,15 +179,20 @@ def api_user():
     })
 
 @app.route('/api/language', methods=['GET', 'POST'])
-@login_required
 def api_language():
-    """Get or set preferred language for the current session"""
+    """Get or set preferred language for the current session (publicly accessible)"""
     if request.method == 'POST':
         data = request.json or {}
         lang = data.get('lang', 'en')
         if lang not in ['en', 'hi', 'mr']:
             return jsonify({"success": False, "error": "Unsupported language. Use: en, hi, mr"})
         session['lang'] = lang
+        if 'user_id' in session:
+            try:
+                from database import update_user
+                update_user(session['user_id'], preferred_lang=lang)
+            except Exception:
+                pass
         return jsonify({"success": True, "lang": lang})
     else:
         return jsonify({"success": True, "lang": session.get('lang', 'en')})

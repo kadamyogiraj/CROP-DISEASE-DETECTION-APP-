@@ -1096,3 +1096,46 @@ body {
 .sidebar-btn {
     z-index: 2100 !important;
 }
+
+/* ===== Quick Language Switcher ===== */
+.lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1.5px solid rgba(46, 125, 50, 0.25);
+    border-radius: 30px;
+    padding: 3px;
+    gap: 3px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.lang-btn {
+    border: none;
+    background: transparent;
+    color: var(--dark-green);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.lang-btn:hover {
+    background: rgba(46, 125, 50, 0.12);
+}
+
+.lang-btn.active {
+    background: var(--dark-green);
+    color: var(--white);
+    box-shadow: 0 2px 6px rgba(46, 125, 50, 0.35);
+}
+
+.top-bar-lang {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 12px;
+}

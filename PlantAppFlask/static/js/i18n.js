@@ -37,6 +37,20 @@
         });
         // Update html lang attribute
         document.documentElement.lang = _currentLang;
+
+        // Update any quick language switcher buttons on the page
+        document.querySelectorAll('[data-lang-btn]').forEach(function (btn) {
+            if (btn.getAttribute('data-lang-btn') === _currentLang) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Dispatch language changed event for dynamic listeners
+        try {
+            window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: _currentLang } }));
+        } catch (e) { /* ignore */ }
     }
 
     /** Load a locale JSON file and apply it */

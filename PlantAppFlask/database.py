@@ -14,7 +14,7 @@ try:
     _HASHING_ENABLED = True
 except ImportError:
     _HASHING_ENABLED = False
-    print("[WARNING] werkzeug not found. Passwords stored in plaintext. Install: pip install werkzeug")
+    print("⚠️  WARNING: werkzeug not found. Passwords stored in plaintext. Install: pip install werkzeug")
 
 DB_PATH = 'plantcare.db'
 
@@ -136,7 +136,8 @@ def login_user(email, password):
             "user": {
                 "id": user['id'],
                 "name": user['name'],
-                "email": user['email']
+                "email": user['email'],
+                "preferred_lang": user['preferred_lang'] if 'preferred_lang' in user.keys() and user['preferred_lang'] else 'en'
             }
         }
     return {"success": False, "error": "Invalid email or password"}

@@ -25,6 +25,15 @@
 </head>
 <body>
     <div class="container">
+        <!-- Quick Language Switcher -->
+        <div class="top-bar-lang">
+            <div class="lang-switcher">
+                <button type="button" class="lang-btn active" data-lang-btn="en" onclick="setLanguage('en')">EN</button>
+                <button type="button" class="lang-btn" data-lang-btn="hi" onclick="setLanguage('hi')">हिंदी</button>
+                <button type="button" class="lang-btn" data-lang-btn="mr" onclick="setLanguage('mr')">मराठी</button>
+            </div>
+        </div>
+
         <!-- Logo -->
         <div class="logo-container">
             <div class="logo-circle">
@@ -110,9 +119,15 @@
             document.getElementById('loginTab').classList.add('active');
             document.getElementById('signupTab').classList.remove('active');
             document.getElementById('signupFields').classList.add('hidden');
-            document.getElementById('pageTitle').textContent = window.t ? window.t('auth.welcome_back') : 'Welcome Back!';
-            document.getElementById('pageSubtitle').textContent = window.t ? window.t('auth.sign_in_subtitle') : 'Sign in to continue your plant care journey';
-            document.querySelector('#submitBtn span').textContent = window.t ? window.t('auth.sign_in') : 'Sign In';
+            const titleEl = document.getElementById('pageTitle');
+            const subEl = document.getElementById('pageSubtitle');
+            const btnSpan = document.querySelector('#submitBtn span');
+            titleEl.setAttribute('data-i18n', 'auth.welcome_back');
+            subEl.setAttribute('data-i18n', 'auth.sign_in_subtitle');
+            btnSpan.setAttribute('data-i18n', 'auth.sign_in');
+            titleEl.textContent = window.t ? window.t('auth.welcome_back') : 'Welcome Back!';
+            subEl.textContent = window.t ? window.t('auth.sign_in_subtitle') : 'Sign in to continue your plant care journey';
+            btnSpan.textContent = window.t ? window.t('auth.sign_in') : 'Sign In';
             document.getElementById('messageArea').innerHTML = '';
             document.getElementById('forgotLink').style.display = 'block';
         }
@@ -122,9 +137,15 @@
             document.getElementById('loginTab').classList.remove('active');
             document.getElementById('signupTab').classList.add('active');
             document.getElementById('signupFields').classList.remove('hidden');
-            document.getElementById('pageTitle').textContent = window.t ? window.t('auth.create_account_title') : 'Create Account';
-            document.getElementById('pageSubtitle').textContent = window.t ? window.t('auth.join_subtitle') : 'Join PlantCare AI today';
-            document.querySelector('#submitBtn span').textContent = window.t ? window.t('auth.create_account') : 'Create Account';
+            const titleEl = document.getElementById('pageTitle');
+            const subEl = document.getElementById('pageSubtitle');
+            const btnSpan = document.querySelector('#submitBtn span');
+            titleEl.setAttribute('data-i18n', 'auth.create_account_title');
+            subEl.setAttribute('data-i18n', 'auth.join_subtitle');
+            btnSpan.setAttribute('data-i18n', 'auth.create_account');
+            titleEl.textContent = window.t ? window.t('auth.create_account_title') : 'Create Account';
+            subEl.textContent = window.t ? window.t('auth.join_subtitle') : 'Join PlantCare AI today';
+            btnSpan.textContent = window.t ? window.t('auth.create_account') : 'Create Account';
             document.getElementById('messageArea').innerHTML = '';
             document.getElementById('forgotLink').style.display = 'none';
         }

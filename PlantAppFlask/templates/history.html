@@ -92,6 +92,15 @@
             <div style="width:40px;"></div>
         </div>
 
+        <!-- Quick Language Switcher -->
+        <div class="top-bar-lang" style="margin-top: 4px; margin-bottom: 12px;">
+            <div class="lang-switcher">
+                <button type="button" class="lang-btn active" data-lang-btn="en" onclick="setLanguage('en')">EN</button>
+                <button type="button" class="lang-btn" data-lang-btn="hi" onclick="setLanguage('hi')">हिंदी</button>
+                <button type="button" class="lang-btn" data-lang-btn="mr" onclick="setLanguage('mr')">मराठी</button>
+            </div>
+        </div>
+
         <!-- History Container (loaded from API) -->
         <div class="history-container animate-fade-in" id="historyContainer">
             <!-- Loading state -->
@@ -195,6 +204,10 @@
         // Load history after i18n is ready
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(loadHistory, 300);
+        });
+
+        window.addEventListener('languageChanged', function() {
+            loadHistory();
         });
     </script>
     <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
