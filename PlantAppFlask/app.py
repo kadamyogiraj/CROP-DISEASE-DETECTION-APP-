@@ -437,10 +437,10 @@ def api_chat():
     return jsonify({"success": True, "response": response})
 
 if __name__ == '__main__':
-    print("🌿 PlantCare AI Server Starting...")
-    print("🔐 Authentication: Enabled")
-    print("🌐 Language: English / Hindi / Marathi")
-    print("📱 Open http://localhost:5000 in your browser")
-    print("📱 For mobile: http://<your-ip>:5000")
-    print("💾 Database: SQLite (plantcare.db)")
+    print("[*] PlantCare AI Server Starting...")
+    print("[*] Authentication: Enabled")
+    print("[*] Language: English / Hindi / Marathi")
+    print("[*] Open http://localhost:5000 in your browser")
+    print("[*] For mobile: http://<your-ip>:5000")
+    print("[*] Database: SQLite (plantcare.db)")
     app.run(debug=True, host='0.0.0.0', port=5000)

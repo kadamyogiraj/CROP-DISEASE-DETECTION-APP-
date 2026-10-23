@@ -14,7 +14,7 @@ try:
     _HASHING_ENABLED = True
 except ImportError:
     _HASHING_ENABLED = False
-    print("⚠️  WARNING: werkzeug not found. Passwords stored in plaintext. Install: pip install werkzeug")
+    print("[WARNING] werkzeug not found. Passwords stored in plaintext. Install: pip install werkzeug")
 
 DB_PATH = 'plantcare.db'
 
@@ -97,7 +97,7 @@ def init_db():
     
     conn.commit()
     conn.close()
-    print("✅ Database initialized!")
+    print("[OK] Database initialized!")
 
 # ===== User Functions =====
 
